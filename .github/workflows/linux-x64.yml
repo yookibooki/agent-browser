@@ -34,12 +34,9 @@ jobs:
       - name: Run unit tests
         run: cargo test --profile ci --manifest-path cli/Cargo.toml
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Build native binary (Linux x64)
         run: |
-          pnpm run version:sync
+          node scripts/sync-version.js
           cargo build --release --manifest-path cli/Cargo.toml
           node scripts/copy-native.js
 
