@@ -74,3 +74,10 @@ jobs:
           echo "--- Closing browser ---"
           "$BINARY" close
           echo "--- Daemon lifecycle test passed ---"
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-browser-linux-x64
+          path: bin/agent-browser-linux-x64
+          retention-days: 7
