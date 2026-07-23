@@ -7586,7 +7586,21 @@ fn write_provider_file(session_id: &str, provider: &str) {
 
 fn write_provider_session_file(session_id: &str, provider_session_id: &str) {
     let path = get_socket_dir().join(format!("{}.provider-session", session_id));
-    let _ = fs::write(path, provider_session_id);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        let _ = fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .mode(0o600)
+            .open(&path)
+            .and_then(|mut f| f.write_all(provider_session_id.as_bytes()));
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = fs::write(&path, provider_session_id);
+    }
 }
 
 fn remove_provider_file(session_id: &str) {

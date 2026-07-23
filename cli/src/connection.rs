@@ -165,7 +165,10 @@ pub fn read_provider_session_id(session: &str) -> Option<String> {
         .filter(|s| !s.is_empty())
 }
 
-/// Clean up stale socket and PID files for a session
+/// Clean up stale socket and PID files for a session.
+///
+/// The `.provider-session` sidecar is preserved so a later `close --all`
+/// can still release the remote provider session after a crash.
 pub fn cleanup_stale_files(session: &str) {
     let pid_path = get_pid_path(session);
     let _ = fs::remove_file(&pid_path);
@@ -175,8 +178,6 @@ pub fn cleanup_stale_files(session: &str) {
     let _ = fs::remove_file(&config_path);
     let stream_path = get_socket_dir().join(format!("{}.stream", session));
     let _ = fs::remove_file(&stream_path);
-    let provider_session_path = get_provider_session_path(session);
-    let _ = fs::remove_file(&provider_session_path);
 
     #[cfg(unix)]
     {
