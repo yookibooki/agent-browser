@@ -53,6 +53,12 @@ jobs:
           fi
           echo "Binary size: $(stat -c%s "$BINARY") bytes"
           "$BINARY" --version
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-browser-linux-x64
+          path: bin/agent-browser-linux-x64
+          retention-days: 7
 
       - name: Install Chrome
         run: |
@@ -62,8 +68,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Run e2e tests
-        run: cargo test --profile ci --manifest-path cli/Cargo.toml e2e -- --ignored --test-threads=1
 
+        run: cargo test --profile ci --manifest-path cli/Cargo.toml e2e -- --ignored --test-threads=1
       - name: Test daemon lifecycle
         run: |
           BINARY=bin/agent-browser-linux-x64
@@ -74,10 +80,3 @@ jobs:
           echo "--- Closing browser ---"
           "$BINARY" close
           echo "--- Daemon lifecycle test passed ---"
-
-      - name: Upload binary artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: agent-browser-linux-x64
-          path: bin/agent-browser-linux-x64
-          retention-days: 7
