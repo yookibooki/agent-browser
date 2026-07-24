@@ -972,7 +972,10 @@ fn run_close_all(flags: &Flags) {
                 if let Some(provider_session_id) = read_provider_session_id(session) {
                     let rt = tokio::runtime::Runtime::new().ok();
                     if let Some(rt) = rt {
-                        rt.block_on(cleanup_orphaned_provider_session(session, &provider_session_id));
+                        rt.block_on(cleanup_orphaned_provider_session(
+                            session,
+                            &provider_session_id,
+                        ));
                     }
                 }
                 cleanup_stale_files(session);
